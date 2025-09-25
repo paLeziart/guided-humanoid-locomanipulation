@@ -1,6 +1,6 @@
 # Expert-Guided Imitation for Learning Humanoid Loco-Manipulation from Motion Capture
 
-This repository contains the source code for the [Expert-Guided Humanoid Loco-Manipulation website](https://github.com/isri-aist/guided-humanoid-locomanipulation.github.io), a work presented in **Expert-Guided Imitation for Learning Humanoid Loco-Manipulation from Motion Capture** by  Rohan P. Singh\*, Pierre-Alexandre Leziart\*, Masaki Murooka, Mitsuharu Morisawa, Eiichi Yoshida and Fumio Kanehiro.
+This repository contains the source code for the [Expert-Guided Humanoid Loco-Manipulation website](https://paleziart.github.io/guided-humanoid-locomanipulation/), a work presented in **Expert-Guided Imitation for Learning Humanoid Loco-Manipulation from Motion Capture** by  Rohan P. Singh\*, Pierre-Alexandre Leziart\*, Masaki Murooka, Mitsuharu Morisawa, Eiichi Yoshida and Fumio Kanehiro.
 
 <!-- This paper has been accepted for the 2024 IEEE/RSJ International Conference on Intelligent Robots and Systems (IROS 2024).
 
