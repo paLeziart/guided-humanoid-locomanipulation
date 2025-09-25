@@ -161,6 +161,177 @@
   </div>
 </section>
 
+<section class="section">
+  <div class="container is-max-desktop">
+    <div class="column is-full-width">
+      
+      <div class="content has-text-justified">
+        <p>
+          Our objective is to develop a methodology that enables humanoid robots to learn
+          loco-manipulation behaviors directly from human motion demonstrations. To this
+          end, we propose a framework that combines motion capture, inverse kinematics (IK),
+          and reinforcement learning (RL) with an auxiliary Behavior Cloning (BC) loss term
+          to achieve motion imitation while maintaining dynamic feasibility on humanoid
+          platforms.  
+        </p>
+      </div>
+
+      <h3 class="title is-3">Motion capture recording</h3>
+      <div class="content has-text-justified">
+        <p>
+          The pipeline begins with the collection of reference motion data in-house by having a human subject perform
+          the loco-manipulation task while wearing a full-body motion capture suit. 
+          This includes walking towards a box placed on a table, picking it up, then walking to another table to drop it down. 
+          We record both the 3D trajectories of body markers and the corresponding skeletal
+          motion. We also record contact forces through sensors placed on the hands and on the bottom surface of the box for accurate identification of contact events during interaction.
+        </p><br>
+        <div class="columns is-centered has-text-centered">
+          <video id="teaser" autoplay muted loop controls playsinline width="900">
+            <source src="./static/videos/motion_capture_recording.mp4"
+                    type="video/mp4">
+          </video>
+        </div>
+        <h4 class="subtitle has-text-justified">
+          <i>Fig 1: Recording a single human motion reference using a motion capture system.</i>
+        </h4>
+      </div>
+
+      <h3 class="title is-3">Motion retargeting with IK</h3>
+      <div class="content has-text-justified">
+        <p>
+          The kinematic retargeting of the collected MoCap trajectory from a human skeleton
+          to a humanoid robot is formulated as an optimization-based inverse kinematics through a constrained quadratic programming problem. The objective function
+          minimizes the weighted sum of squared errors between the 3D positions and orientations
+          of key end-effectors (hands and feet) as well as the pose of the torso,
+          and the head. This formulation allows for smooth tracking of human motion while preserving
+          the structural characteristics of the original trajectory.
+        </p><br>
+        <div class="columns is-centered has-text-centered">
+          <video id="teaser" autoplay muted loop controls playsinline width="900">
+            <source src="./static/videos/IK_retargeting.mp4"
+                    type="video/mp4">
+          </video>
+        </div>
+        <h4 class="subtitle has-text-justified">
+          <i>Fig 2: Visualization of the retargeting with both human and robot skeletons.</i>
+        </h4>
+      </div>
+
+      <h3 class="title is-3">Training an expert walking policy</h3>
+      <div class="content has-text-justified">
+        <p>
+          Directly mimicking full-body trajectories including walking
+          movements is infeasible due to the substantial dynamic and morphological differences
+          between humans and humanoid robots. In particular, the discrepancy in limb proportions 
+          and joint constraints often leads to violations of dynamic stability when attempting to 
+          directly replicate human walking patterns. Our early sim-to-real experiments showed that 
+          the robot struggles to make stable foot contacts with the floor while making unrealistically 
+          long strides. Furthermore, tuning IK parameters to enforce both kinematic accuracy and 
+          plausible contact dynamics such as maintaining foot orientation is labor-intensive and not scalable. 
+          Thus we train an expert bipedal walking policy by adapting for H1 the approach presented in [1] [2].
+        </p><br>
+        <div class="columns is-centered has-text-centered">
+          <video id="teaser" autoplay muted loop controls playsinline width="900">
+            <source src="./static/videos/expert_policy.mp4"
+                    type="video/mp4">
+          </video>
+        </div>
+        <h4 class="subtitle has-text-justified">
+          <i>Fig 3: The expert policy is trained with dynamics randomization, random pushes and small terrain bumps.</i>
+        </h4>
+        <p>
+          [1] R. P. singh, Z. Xie, P. Gergondet, and F. Kanehiro, “Learning bipedal 
+          walking for humanoids with current feedback,” IEEE Access, vol. 11, 
+          pp. 82 013-82 023, 2023.<br>
+          [2] R. P. Singh, M. Morisawa, M. Benallegue, Z. Xie, and F. Kanehiro, 
+          “Robust humanoid walking on compliant and uneven terrain with 
+          deep reinforcement learning,” in 2024 IEEE-RAS 23rd International 
+          Conference on Humanoid Robots (Humanoids). IEEE, 2024, pp. 497-504. 
+        </p>
+      </div>
+
+
+      <h3 class="title is-3">Hybrid motion tracking with RL and BC</h3>
+      <div class="content has-text-justified">
+        <p>
+          We implement a teacher-student supervision through a behavior cloning objective, guiding the
+          student policy to match the expert's leg actions. In parallel, we leverage RL to train the 
+          upper body to imitate the human motion reference. This hybrid 
+          approach allows the student policy to benefit from high-level human demonstrations
+          while leveraging the robustness and stability of the expert locomotion policy,
+          resulting in a coherent whole-body behavior that successfully integrates walking
+          and manipulation.
+        </p><br>
+        <div class="columns is-centered has-text-centered">
+          <video id="teaser" autoplay muted loop controls playsinline width="900" >
+            <source src="./static/videos/locomanipulation_simu.mp4"
+                    type="video/mp4">
+          </video>
+        </div>
+        <h4 class="subtitle has-text-justified">
+          <i>Fig 4: We train 3 policies respectively for pick-up, drop-off and return to the origin. 
+             When one policy has finished its task, we automatically switch to the next one.</i>
+        </h4>
+      </div>
+
+      <h3 class="title is-3">Real-world deployment</h3>
+      <div class="content has-text-justified">
+        <p>
+          The robot achieves 
+          a full loco-manipulation cycle by walking toward the box, picking it up to drop it off on 
+          another table, then going back to its starting position. This is done in one go by automatically 
+          switching between policies when the phase clock signal reaches its final value. The cycle can 
+          be repeated on-the-fly by placing the box back on the first table while the robot is returning 
+          to the starting position. This successful deployment indicates that the domain randomization 
+          we used was effective for crossing the sim-to-real gap. 
+        </p><br>
+        <div class="columns is-centered has-text-centered">
+          <video id="teaser" autoplay muted loop controls playsinline width="900" >
+            <source src="./static/videos/locomanipulation_real.mp4"
+                    type="video/mp4">
+          </video>
+        </div>
+        <h4 class="subtitle has-text-justified">
+          <i>Fig 5: Full loco-manipulation cycle by switching policies online. The cycle is repeated
+            by switching back to the first policy once the robot is back at the initial position.
+          </i>
+        </h4>
+      </div>
+
+      <h3 class="title is-3">Extension to long distance loco-manipulation</h3>
+      <div class="content has-text-justified">
+        <p>
+          Even if the policy was trained with a single human motion recording that demonstrated
+          a pick-and-place on a short distance, we generalize loco-manipulation over long distances.
+          To do so, we leverage a 2D Dubins planning algorithm to generate paths along which fake target 
+          positions will be set to sequentially lead the robot to the real pick-up and drop-off locations.
+          That way the target positions given to the policy remains in-distribution.
+        </p><br>
+        <div class="columns is-centered has-text-centered">
+          <video id="teaser" autoplay muted loop controls playsinline width="900" >
+            <source src="./static/videos/locomanipulation_long_distance.mp4"
+                    type="video/mp4">
+          </video>
+        </div>
+        <h4 class="subtitle has-text-justified">
+          <i>Fig 6: Due to the box position, the robot cannot directly handle it as a target as it is way
+            out of distribution. Instead, we use the Dubins planner to generate intermediate targets so
+            that the robot moves past the box before looping back.
+          </i>
+        </h4>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+
+
+
+
+
+
+
 
 <footer class="footer">
   <div class="container">
